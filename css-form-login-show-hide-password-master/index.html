@@ -25,10 +25,57 @@
                     <i class="far fa-eye"></i>
                 </div>
             </div>
-            <input type="submit" value="Đăng nhập" class="form-submit">
+            <input type="button" value="Đăng nhập bằng Google" class="form-submit" id="btn-login-google">
         </form>
     </div>
-    
+
+    <script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js"
+    }
+  }
+    </script>
+
+    <script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
+  // MÃ CẤU HÌNH CỦA BẠN:
+  const firebaseConfig = {
+    apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q",
+    authDomain: "dangnhap1-c4cc0.firebaseapp.com",
+    projectId: "dangnhap1-c4cc0",
+    storageBucket: "dangnhap1-c4cc0.firebasestorage.app",
+    messagingSenderId: "252914631733",
+    appId: "1:252914631733:web:1cee2d0f290e2b05df5d7c",
+    measurementId: "G-7H39BHN61E"
+  };
+
+  // Khởi tạo Firebase và Auth
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  // KẾT NỐI VỚI NÚT ĐĂNG NHẬP TRÊN GIAO DIỆN
+  const loginBtn = document.getElementById('btn-login-google'); 
+
+  if(loginBtn) {
+    loginBtn.addEventListener('click', (e) => {
+      e.preventDefault(); // Ngăn trang bị tải lại
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          alert("Đăng nhập thành công! Xin chào: " + result.user.displayName);
+        }).catch((error) => {
+          console.error("Lỗi đăng nhập:", error);
+          alert("Lỗi đăng nhập: " + error.message);
+        });
+    });
+  } else {
+    console.log("Chưa tìm thấy nút nào có id='btn-login-google' trong file HTML");
+  }
+    </script>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <script src="js/app.js"></script>
