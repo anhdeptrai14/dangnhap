@@ -9,83 +9,18 @@
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
     <title>Đăng nhập Ánh Shop</title>
     <style>
-        /* CSS làm đẹp cho bảng thông tin */
-        #user-profile {
-            display: none;
-            text-align: center;
-            color: #ffffff; 
-            font-family: Arial, sans-serif;
-            margin-top: 40px;
-        }
-        #user-profile img {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            border: 3px solid #fff;
-            margin-bottom: 15px;
-            object-fit: cover;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            background-color: #f1f2f6;
-        }
-        #user-profile h2 {
-            font-size: 22px;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        #user-profile p {
-            font-size: 16px;
-            color: #d1d1d1;
-            margin-bottom: 20px;
-        }
-        #btn-logout {
-            padding: 10px 25px;
-            background-color: #ff4757;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        #btn-logout:hover {
-            background-color: #ff6b81;
-        }
-        
-        /* Chỉnh lại các nút bấm */
-        .btn-group {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .btn-half {
-            flex: 1;
-            padding: 12px 0;
-            border: none;
-            border-radius: 4px;
-            color: #fff;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-        #btn-login-email { background-color: #576574; }
-        #btn-login-email:hover { background-color: #8395a7; }
-        #btn-register { background-color: #2ed573; }
-        #btn-register:hover { background-color: #7bed9f; }
-        
-        .divider {
-            text-align: center;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-        #error-msg {
-            color: #ff4757;
-            font-size: 14px;
-            text-align: center;
-            margin-bottom: 15px;
-            display: none;
-        }
+        #user-profile { display: none; text-align: center; color: #ffffff; font-family: Arial, sans-serif; margin-top: 40px; }
+        #user-profile img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #fff; margin-bottom: 15px; object-fit: cover; background-color: #f1f2f6; }
+        #user-profile h2 { font-size: 22px; margin-bottom: 10px; font-weight: bold; }
+        #user-profile p { font-size: 16px; color: #d1d1d1; margin-bottom: 20px; }
+        #btn-logout { padding: 10px 25px; background-color: #ff4757; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        #btn-logout:hover { background-color: #ff6b81; }
+        .btn-group { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 15px; }
+        .btn-half { flex: 1; padding: 12px 0; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        #btn-login-email { background-color: #576574; } #btn-login-email:hover { background-color: #8395a7; }
+        #btn-register { background-color: #2ed573; } #btn-register:hover { background-color: #7bed9f; }
+        .divider { text-align: center; color: rgba(255,255,255,0.5); margin-bottom: 15px; font-size: 14px; }
+        #error-msg { color: #ff4757; font-size: 14px; text-align: center; margin-bottom: 15px; display: none; }
     </style>
 </head>
 
@@ -100,29 +35,21 @@
     <div id="wrapper">
         <form action="" id="form-login">
             <h1 class="form-heading">Form đăng nhập</h1>
-            
             <div class="form-group">
                 <i class="far fa-envelope"></i>
                 <input type="email" class="form-input" id="email-input" placeholder="Email của bạn">
             </div>
-            
             <div class="form-group">
                 <i class="fas fa-key"></i>
                 <input type="password" class="form-input" id="password-input" placeholder="Mật khẩu (từ 6 ký tự)">
-                <div id="eye">
-                    <i class="far fa-eye"></i>
-                </div>
+                <div id="eye"><i class="far fa-eye"></i></div>
             </div>
-            
             <div id="error-msg">Sai tài khoản hoặc mật khẩu!</div>
-
             <div class="btn-group">
                 <input type="button" value="Đăng nhập" class="btn-half" id="btn-login-email">
                 <input type="button" value="Đăng ký mới" class="btn-half" id="btn-register">
             </div>
-            
             <div class="divider">HOẶC</div>
-            
             <input type="button" value="ĐĂNG NHẬP BẰNG GOOGLE" class="form-submit" id="btn-login-google" style="background-color: #ea4335;">
         </form>
     </div>
@@ -135,12 +62,10 @@
     }
   }
     </script>
-
     <script type="module">
   import { initializeApp } from "firebase/app";
   import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
-  // MÃ CẤU HÌNH FIREBASE
   const firebaseConfig = {
     apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q",
     authDomain: "dangnhap1-c4cc0.firebaseapp.com",
@@ -155,101 +80,67 @@
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
-  // Nhận diện các thành phần trên web
   const loginBtnGoogle = document.getElementById('btn-login-google');
   const btnLoginEmail = document.getElementById('btn-login-email');
   const btnRegister = document.getElementById('btn-register');
   const logoutBtn = document.getElementById('btn-logout');
-  
   const emailInput = document.getElementById('email-input');
   const passwordInput = document.getElementById('password-input');
   const errorMsg = document.getElementById('error-msg');
-  
   const wrapperDiv = document.getElementById('wrapper');
   const userProfileDiv = document.getElementById('user-profile');
   const userNameSpan = document.getElementById('user-name');
   const userAvatarImg = document.getElementById('user-avatar');
 
-  // Hàm hiển thị lỗi
-  function showError(text) {
-      errorMsg.textContent = text;
-      errorMsg.style.display = 'block';
-  }
+  function showError(text) { errorMsg.textContent = text; errorMsg.style.display = 'block'; }
 
-  // LẮNG NGHE TRẠNG THÁI: Kiểm tra đăng nhập
   onAuthStateChanged(auth, (user) => {
     if (user) {
       wrapperDiv.style.display = 'none';
       userProfileDiv.style.display = 'block';
-      // Nếu đăng nhập bằng email thường sẽ không có tên và ảnh, ta đặt mặc định
-      userNameSpan.textContent = user.displayName || user.email.split('@')[0];
-      userAvatarImg.src = user.photoURL || "https://i.imgur.com/6VBx3io.png";
+      const name = user.displayName || user.email.split('@')[0];
+      const avatar = user.photoURL || "https://i.imgur.com/6VBx3io.png";
+      userNameSpan.textContent = name;
+      userAvatarImg.src = avatar;
+      
+      // BÁO CÁO CHO BLOGGER LÀ ĐÃ ĐĂNG NHẬP
+      window.parent.postMessage({ status: 'logged_in', name: name, avatar: avatar }, "*");
     } else {
       wrapperDiv.style.display = ''; 
       userProfileDiv.style.display = 'none';
       errorMsg.style.display = 'none';
       emailInput.value = '';
       passwordInput.value = '';
+      
+      // BÁO CÁO CHO BLOGGER LÀ ĐÃ ĐĂNG XUẤT
+      window.parent.postMessage({ status: 'logged_out' }, "*");
     }
   });
 
-  // 1. KHI BẤM NÚT ĐĂNG KÝ
   if(btnRegister) {
       btnRegister.addEventListener('click', () => {
-          const email = emailInput.value;
-          const password = passwordInput.value;
-          
-          if(!email || !password) return showError("Vui lòng nhập đầy đủ Email và Mật khẩu!");
-          if(password.length < 6) return showError("Mật khẩu phải từ 6 ký tự trở lên!");
-
+          const email = emailInput.value; const password = passwordInput.value;
+          if(!email || !password) return showError("Vui lòng nhập đầy đủ!");
+          if(password.length < 6) return showError("Mật khẩu từ 6 ký tự trở lên!");
           createUserWithEmailAndPassword(auth, email, password)
-            .then(() => {
-                alert("Đăng ký tài khoản thành công! Tự động đăng nhập...");
-            })
-            .catch((error) => {
-                if(error.code === 'auth/email-already-in-use') {
-                    showError("Email này đã được sử dụng!");
-                } else if(error.code === 'auth/invalid-email') {
-                    showError("Định dạng Email không hợp lệ!");
-                } else {
-                    showError("Lỗi: " + error.message);
-                }
-            });
+            .then(() => alert("Đăng ký thành công!"))
+            .catch((error) => showError("Lỗi: " + error.message));
       });
   }
-
-  // 2. KHI BẤM NÚT ĐĂNG NHẬP BẰNG EMAIL
   if(btnLoginEmail) {
       btnLoginEmail.addEventListener('click', () => {
-          const email = emailInput.value;
-          const password = passwordInput.value;
-          
-          if(!email || !password) return showError("Vui lòng nhập đầy đủ Email và Mật khẩu!");
-
-          signInWithEmailAndPassword(auth, email, password)
-            .catch((error) => {
-                showError("Sai tài khoản hoặc mật khẩu!");
-                console.error(error);
-            });
+          const email = emailInput.value; const password = passwordInput.value;
+          if(!email || !password) return showError("Vui lòng nhập đầy đủ!");
+          signInWithEmailAndPassword(auth, email, password).catch(() => showError("Sai tài khoản hoặc mật khẩu!"));
       });
   }
-
-  // 3. KHI BẤM NÚT ĐĂNG NHẬP GOOGLE
   if(loginBtnGoogle) {
     loginBtnGoogle.addEventListener('click', (e) => {
       e.preventDefault();
-      signInWithPopup(auth, provider).catch((error) => {
-          showError("Lỗi đăng nhập Google!");
-        });
+      signInWithPopup(auth, provider).catch(() => showError("Lỗi đăng nhập Google!"));
     });
   }
-
-  // 4. KHI BẤM NÚT ĐĂNG XUẤT
-  if(logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-      signOut(auth);
-    });
-  }
+  if(logoutBtn) { logoutBtn.addEventListener('click', () => signOut(auth)); }
     </script>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
