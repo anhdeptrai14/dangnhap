@@ -7,10 +7,59 @@
     <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
-    <title>Form login unitop.vn</title>
+    <title>Đăng nhập Ánh Shop</title>
+    <style>
+        /* CSS làm đẹp cho bảng thông tin sau khi đăng nhập */
+        #user-profile {
+            display: none;
+            text-align: center;
+            color: #ffffff; 
+            font-family: Arial, sans-serif;
+            margin-top: 40px;
+        }
+        #user-profile img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            margin-bottom: 15px;
+            object-fit: cover;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #user-profile h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        #user-profile p {
+            font-size: 16px;
+            color: #d1d1d1;
+            margin-bottom: 20px;
+        }
+        #btn-logout {
+            padding: 10px 25px;
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        #btn-logout:hover {
+            background-color: #ff6b81;
+        }
+    </style>
 </head>
 
 <body>
+    <div id="user-profile">
+        <img id="user-avatar" src="" alt="Avatar">
+        <h2>Xin chào, <span id="user-name"></span>!</h2>
+        <p>Chào mừng bạn đến với Ánh Shop</p>
+        <button id="btn-logout">Đăng xuất</button>
+    </div>
+
     <div id="wrapper">
         <form action="" id="form-login">
             <h1 class="form-heading">Form đăng nhập</h1>
@@ -25,7 +74,7 @@
                     <i class="far fa-eye"></i>
                 </div>
             </div>
-            <input type="button" value="Đăng nhập bằng Google" class="form-submit" id="btn-login-google">
+            <input type="button" value="ĐĂNG NHẬP BẰNG GOOGLE" class="form-submit" id="btn-login-google">
         </form>
     </div>
 
@@ -40,9 +89,9 @@
 
     <script type="module">
   import { initializeApp } from "firebase/app";
-  import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "firebase/auth";
 
-  // MÃ CẤU HÌNH CỦA BẠN:
+  // MÃ CẤU HÌNH FIREBASE
   const firebaseConfig = {
     apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q",
     authDomain: "dangnhap1-c4cc0.firebaseapp.com",
@@ -53,27 +102,53 @@
     measurementId: "G-7H39BHN61E"
   };
 
-  // Khởi tạo Firebase và Auth
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
-  // KẾT NỐI VỚI NÚT ĐĂNG NHẬP TRÊN GIAO DIỆN
-  const loginBtn = document.getElementById('btn-login-google'); 
+  // Nhận diện các thành phần trên web
+  const loginBtn = document.getElementById('btn-login-google');
+  const logoutBtn = document.getElementById('btn-logout');
+  const wrapperDiv = document.getElementById('wrapper');
+  const userProfileDiv = document.getElementById('user-profile');
+  const userNameSpan = document.getElementById('user-name');
+  const userAvatarImg = document.getElementById('user-avatar');
 
+  // LẮNG NGHE TRẠNG THÁI: Kiểm tra xem ai đang đăng nhập không
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // Đã đăng nhập -> Giấu form đi, hiện thông tin người dùng lên
+      wrapperDiv.style.display = 'none';
+      userProfileDiv.style.display = 'block';
+      userNameSpan.textContent = user.displayName;
+      userAvatarImg.src = user.photoURL;
+    } else {
+      // Chưa đăng nhập -> Hiện form đăng nhập, giấu thông tin
+      wrapperDiv.style.display = ''; 
+      userProfileDiv.style.display = 'none';
+    }
+  });
+
+  // KHI BẤM NÚT ĐĂNG NHẬP
   if(loginBtn) {
     loginBtn.addEventListener('click', (e) => {
-      e.preventDefault(); // Ngăn trang bị tải lại
-      signInWithPopup(auth, provider)
-        .then((result) => {
-          alert("Đăng nhập thành công! Xin chào: " + result.user.displayName);
-        }).catch((error) => {
+      e.preventDefault();
+      signInWithPopup(auth, provider).catch((error) => {
           console.error("Lỗi đăng nhập:", error);
           alert("Lỗi đăng nhập: " + error.message);
         });
     });
-  } else {
-    console.log("Chưa tìm thấy nút nào có id='btn-login-google' trong file HTML");
+  }
+
+  // KHI BẤM NÚT ĐĂNG XUẤT
+  if(logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      signOut(auth).then(() => {
+        console.log("Đã đăng xuất!");
+      }).catch((error) => {
+        console.error("Lỗi đăng xuất:", error);
+      });
+    });
   }
     </script>
 </body>
