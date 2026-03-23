@@ -7,12 +7,6 @@
     <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
     <style>
-        /* Đã thiết kế lại giao diện thành công cho gọn gàng, không còn chữ cũ */
-        #user-profile { display: none; text-align: center; color: #ffffff; font-family: Arial, sans-serif; margin-top: 60px; }
-        #user-profile i { font-size: 55px; color: #2ed573; margin-bottom: 15px; }
-        #user-profile h2 { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
-        #user-profile p { font-size: 15px; color: #d1d1d1; }
-        
         .btn-group { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 15px; }
         .btn-half { flex: 1; padding: 12px 0; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         #btn-login-email { background-color: #576574; } #btn-login-email:hover { background-color: #8395a7; }
@@ -37,35 +31,28 @@
     <script type="importmap">
       { "imports": { "firebase/app": "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js", "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js" } }
     </script>
-   <script type="module">
+    <script type="module">
       import { initializeApp } from "firebase/app";
       import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
       const app = initializeApp({ apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q", authDomain: "dangnhap1-c4cc0.firebaseapp.com", projectId: "dangnhap1-c4cc0", storageBucket: "dangnhap1-c4cc0.firebasestorage.app", messagingSenderId: "252914631733", appId: "1:252914631733:web:1cee2d0f290e2b05df5d7c", measurementId: "G-7H39BHN61E" });
       const auth = getAuth(app); const provider = new GoogleAuthProvider();
-      const loginBtnGoogle = document.getElementById('btn-login-google'); const btnLoginEmail = document.getElementById('btn-login-email'); const btnRegister = document.getElementById('btn-register'); const emailInput = document.getElementById('email-input'); const passwordInput = document.getElementById('password-input'); const errorMsg = document.getElementById('error-msg'); const wrapperDiv = document.getElementById('wrapper'); const userProfileDiv = document.getElementById('user-profile');
+      const loginBtnGoogle = document.getElementById('btn-login-google'); const btnLoginEmail = document.getElementById('btn-login-email'); const btnRegister = document.getElementById('btn-register'); const emailInput = document.getElementById('email-input'); const passwordInput = document.getElementById('password-input'); const errorMsg = document.getElementById('error-msg'); const wrapperDiv = document.getElementById('wrapper');
 
       function showError(text) { errorMsg.textContent = text; errorMsg.style.display = 'block'; }
 
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          wrapperDiv.style.display = 'none'; 
-          userProfileDiv.style.display = 'block';
           const name = user.displayName || user.email.split('@')[0];
           
-          // Gửi thông tin sang Blogger để lưu Cache
+          // Gửi thông tin sang Blogger
           window.parent.postMessage({ status: 'logged_in', name: name, email: user.email, avatar: user.photoURL || "https://i.imgur.com/6VBx3io.png", uid: user.uid }, "*");
           
-          // ====================================================
-          // LỆNH TỰ ĐỘNG CHUYỂN HƯỚNG VỀ TRANG CHỦ SAU 1.5 GIÂY
-          // ====================================================
-          setTimeout(() => {
-              // Lệnh này sẽ đưa người dùng về lại trang chủ có chứa Thanh Tài Khoản
-              window.parent.location.href = "https://anhshop.io.vn/"; 
-          }, 1500);
+          // CHUYỂN HƯỚNG NGAY LẬP TỨC (Không hiện thông báo thừa)
+          window.parent.location.href = "https://anhshop.io.vn/"; 
           
         } else {
-          wrapperDiv.style.display = ''; userProfileDiv.style.display = 'none'; errorMsg.style.display = 'none'; emailInput.value = ''; passwordInput.value = '';
+          wrapperDiv.style.display = ''; errorMsg.style.display = 'none'; emailInput.value = ''; passwordInput.value = '';
           window.parent.postMessage({ status: 'logged_out' }, "*");
         }
       });
