@@ -13,9 +13,17 @@
         #btn-register { background-color: #2ed573; } #btn-register:hover { background-color: #7bed9f; }
         .divider { text-align: center; color: rgba(255,255,255,0.5); margin-bottom: 15px; font-size: 14px; }
         #error-msg { color: #ff4757; font-size: 14px; text-align: center; margin-bottom: 15px; display: none; }
+        /* Màn hình chờ siêu mượt */
+        #success-screen { display: none; text-align: center; color: white; padding-top: 50px; }
+        #success-screen i { font-size: 60px; color: #2ed573; margin-bottom: 15px; }
     </style>
 </head>
 <body>
+    <div id="success-screen">
+        <i class="fas fa-check-circle"></i>
+        <h2>Đăng nhập thành công!</h2>
+    </div>
+    
     <div id="wrapper">
         <form id="form-login">
             <h1 class="form-heading">Form đăng nhập</h1>
@@ -35,37 +43,32 @@
       import { initializeApp } from "firebase/app";
       import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
-      const app = initializeApp({ apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q", authDomain: "dangnhap1-c4cc0.firebaseapp.com", projectId: "dangnhap1-c4cc0", storageBucket: "dangnhap1-c4cc0.firebasestorage.app", messagingSenderId: "252914631733", appId: "1:252914631733:web:1cee2d0f290e2b05df5d7c", measurementId: "G-7H39BHN61E" });
+      const app = initializeApp({ apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q", authDomain: "dangnhap1-c4cc0.firebaseapp.com", projectId: "dangnhap1-c4cc0" });
       const auth = getAuth(app); const provider = new GoogleAuthProvider();
-      const loginBtnGoogle = document.getElementById('btn-login-google'); const btnLoginEmail = document.getElementById('btn-login-email'); const btnRegister = document.getElementById('btn-register'); const emailInput = document.getElementById('email-input'); const passwordInput = document.getElementById('password-input'); const errorMsg = document.getElementById('error-msg'); const wrapperDiv = document.getElementById('wrapper');
+      const loginBtnGoogle = document.getElementById('btn-login-google'); const btnLoginEmail = document.getElementById('btn-login-email'); const btnRegister = document.getElementById('btn-register'); const emailInput = document.getElementById('email-input'); const passwordInput = document.getElementById('password-input'); const errorMsg = document.getElementById('error-msg'); const wrapperDiv = document.getElementById('wrapper'); const successScreen = document.getElementById('success-screen');
 
       function showError(text) { errorMsg.textContent = text; errorMsg.style.display = 'block'; }
 
       onAuthStateChanged(auth, (user) => {
         if (user) {
+          wrapperDiv.style.display = 'none';
+          successScreen.style.display = 'block';
           const name = user.displayName || user.email.split('@')[0];
           
-          // Gửi thông tin sang Blogger
-          window.parent.postMessage({ status: 'logged_in', name: name, email: user.email, avatar: user.photoURL || "https://i.imgur.com/6VBx3io.png", uid: user.uid }, "*");
-          
-          // CHUYỂN HƯỚNG NGAY LẬP TỨC (Không hiện thông báo thừa)
-          window.parent.location.href = "https://anhshop.io.vn/"; 
+          // Chỉ gửi tín hiệu sang Blogger, KHÔNG tự tải lại trang nữa!
+          window.parent.postMessage({ status: 'logged_in', name: name, email: user.email, avatar: user.photoURL || "https://i.imgur.com/3Z0o7v7.png", uid: user.uid }, "*");
           
         } else {
-          wrapperDiv.style.display = ''; errorMsg.style.display = 'none'; emailInput.value = ''; passwordInput.value = '';
+          wrapperDiv.style.display = 'block'; successScreen.style.display = 'none'; errorMsg.style.display = 'none';
           window.parent.postMessage({ status: 'logged_out' }, "*");
         }
       });
 
-      if(btnRegister) { btnRegister.addEventListener('click', () => { if(!emailInput.value || !passwordInput.value) return showError("Vui lòng nhập đầy đủ!"); if(passwordInput.value.length < 6) return showError("Mật khẩu từ 6 ký tự trở lên!"); createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value).then(() => alert("Đăng ký thành công!")).catch((error) => showError("Lỗi: " + error.message)); }); }
+      if(btnRegister) { btnRegister.addEventListener('click', () => { if(!emailInput.value || !passwordInput.value) return showError("Vui lòng nhập đầy đủ!"); createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value).then(() => alert("Đăng ký thành công!")).catch((error) => showError("Lỗi: " + error.message)); }); }
       if(btnLoginEmail) { btnLoginEmail.addEventListener('click', () => { if(!emailInput.value || !passwordInput.value) return showError("Vui lòng nhập đầy đủ!"); signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value).catch(() => showError("Sai tài khoản hoặc mật khẩu!")); }); }
-      if(loginBtnGoogle) { loginBtnGoogle.addEventListener('click', (e) => { e.preventDefault(); signInWithPopup(auth, provider).catch(() => showError("Lỗi đăng nhập Google!")); }); }
+      if(loginBtnGoogle) { loginBtnGoogle.addEventListener('click', (e) => { e.preventDefault(); signInWithPopup(auth, provider).catch(() => showError("Lỗi đăng nhập!")); }); }
       
-      window.addEventListener('message', (event) => {
-          if (event.data && event.data.action === 'request_logout') {
-              signOut(auth);
-          }
-      });
+      window.addEventListener('message', (event) => { if (event.data && event.data.action === 'request_logout') signOut(auth); });
     </script>
 </body>
 </html>
