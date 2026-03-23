@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
     <style>
-        #user-profile { display: none; text-align: center; color: #ffffff; font-family: Arial, sans-serif; margin-top: 40px; }
-        #user-profile img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #fff; margin-bottom: 15px; object-fit: cover; background-color: #f1f2f6; }
-        #user-profile h2 { font-size: 22px; margin-bottom: 10px; font-weight: bold; }
-        #user-profile p { font-size: 16px; color: #d1d1d1; margin-bottom: 20px; }
-        #btn-logout { padding: 10px 25px; background-color: #ff4757; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        #btn-logout:hover { background-color: #ff6b81; }
+        /* Đã thiết kế lại giao diện thành công cho gọn gàng, không còn chữ cũ */
+        #user-profile { display: none; text-align: center; color: #ffffff; font-family: Arial, sans-serif; margin-top: 60px; }
+        #user-profile i { font-size: 55px; color: #2ed573; margin-bottom: 15px; }
+        #user-profile h2 { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+        #user-profile p { font-size: 15px; color: #d1d1d1; }
+        
         .btn-group { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 15px; }
         .btn-half { flex: 1; padding: 12px 0; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         #btn-login-email { background-color: #576574; } #btn-login-email:hover { background-color: #8395a7; }
@@ -23,10 +23,9 @@
 </head>
 <body>
     <div id="user-profile">
-        <img id="user-avatar" src="https://i.imgur.com/6VBx3io.png" alt="Avatar">
-        <h2>Xin chào, <span id="user-name"></span>!</h2>
-        <p>Chào mừng bạn đến với Ánh Shop</p>
-        <button id="btn-logout">Đăng xuất</button>
+        <i class="fas fa-check-circle"></i>
+        <h2>Đăng nhập thành công!</h2>
+        <p>Hệ thống đang chuyển hướng...</p>
     </div>
     <div id="wrapper">
         <form id="form-login">
@@ -49,18 +48,19 @@
 
       const app = initializeApp({ apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q", authDomain: "dangnhap1-c4cc0.firebaseapp.com", projectId: "dangnhap1-c4cc0", storageBucket: "dangnhap1-c4cc0.firebasestorage.app", messagingSenderId: "252914631733", appId: "1:252914631733:web:1cee2d0f290e2b05df5d7c", measurementId: "G-7H39BHN61E" });
       const auth = getAuth(app); const provider = new GoogleAuthProvider();
-      const loginBtnGoogle = document.getElementById('btn-login-google'); const btnLoginEmail = document.getElementById('btn-login-email'); const btnRegister = document.getElementById('btn-register'); const logoutBtn = document.getElementById('btn-logout'); const emailInput = document.getElementById('email-input'); const passwordInput = document.getElementById('password-input'); const errorMsg = document.getElementById('error-msg'); const wrapperDiv = document.getElementById('wrapper'); const userProfileDiv = document.getElementById('user-profile'); const userNameSpan = document.getElementById('user-name'); const userAvatarImg = document.getElementById('user-avatar');
+      const loginBtnGoogle = document.getElementById('btn-login-google'); const btnLoginEmail = document.getElementById('btn-login-email'); const btnRegister = document.getElementById('btn-register'); const emailInput = document.getElementById('email-input'); const passwordInput = document.getElementById('password-input'); const errorMsg = document.getElementById('error-msg'); const wrapperDiv = document.getElementById('wrapper'); const userProfileDiv = document.getElementById('user-profile');
 
       function showError(text) { errorMsg.textContent = text; errorMsg.style.display = 'block'; }
 
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          wrapperDiv.style.display = 'none'; userProfileDiv.style.display = 'block';
+          wrapperDiv.style.display = 'none'; 
+          userProfileDiv.style.display = 'block';
           const name = user.displayName || user.email.split('@')[0];
-          userNameSpan.textContent = name; userAvatarImg.src = user.photoURL || "https://i.imgur.com/6VBx3io.png";
           
-          // ĐÃ THÊM LỆNH GỬI UID BÍ MẬT RA CHO BLOGGER
-          window.parent.postMessage({ status: 'logged_in', name: name, avatar: user.photoURL || "https://i.imgur.com/6VBx3io.png", uid: user.uid }, "*");
+          // BỔ SUNG GỬI EMAIL SANG BLOGGER ĐỂ HIỂN THỊ LÊN MENU
+          window.parent.postMessage({ status: 'logged_in', name: name, email: user.email, avatar: user.photoURL || "https://i.imgur.com/6VBx3io.png", uid: user.uid }, "*");
+          
         } else {
           wrapperDiv.style.display = ''; userProfileDiv.style.display = 'none'; errorMsg.style.display = 'none'; emailInput.value = ''; passwordInput.value = '';
           window.parent.postMessage({ status: 'logged_out' }, "*");
@@ -70,7 +70,13 @@
       if(btnRegister) { btnRegister.addEventListener('click', () => { if(!emailInput.value || !passwordInput.value) return showError("Vui lòng nhập đầy đủ!"); if(passwordInput.value.length < 6) return showError("Mật khẩu từ 6 ký tự trở lên!"); createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value).then(() => alert("Đăng ký thành công!")).catch((error) => showError("Lỗi: " + error.message)); }); }
       if(btnLoginEmail) { btnLoginEmail.addEventListener('click', () => { if(!emailInput.value || !passwordInput.value) return showError("Vui lòng nhập đầy đủ!"); signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value).catch(() => showError("Sai tài khoản hoặc mật khẩu!")); }); }
       if(loginBtnGoogle) { loginBtnGoogle.addEventListener('click', (e) => { e.preventDefault(); signInWithPopup(auth, provider).catch(() => showError("Lỗi đăng nhập Google!")); }); }
-      if(logoutBtn) { logoutBtn.addEventListener('click', () => signOut(auth)); }
+      
+      // BỔ SUNG LẮNG NGHE LỆNH "ĐĂNG XUẤT" TỪ BLOGGER GỬI SANG
+      window.addEventListener('message', (event) => {
+          if (event.data && event.data.action === 'request_logout') {
+              signOut(auth);
+          }
+      });
     </script>
 </body>
 </html>
