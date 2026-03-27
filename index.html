@@ -1,92 +1,127 @@
 <!DOCTYPE html>
-<html lang="vi">
+
+<html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="reset.css">
+
+    <link rel="stylesheet" href="app.css">
+
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+
     <style>
-        /* CSS Giữ nguyên giao diện của Ánh */
-        body { font-family: sans-serif; background: transparent; margin: 0; padding: 10px; }
-        #wrapper { display: block; }
-        .form-heading { text-align: center; color: #fff; text-transform: uppercase; margin-bottom: 20px; font-size: 18px; }
-        .form-group { background: rgba(255,255,255,0.1); border: 1px solid #eee; border-radius: 4px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; }
-        .form-group i { color: #fff; margin-right: 10px; width: 20px; text-align: center; }
-        .form-input { background: transparent; border: none; outline: none; color: #fff; flex: 1; }
+
         .btn-group { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 15px; }
+
         .btn-half { flex: 1; padding: 12px 0; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        #btn-login-email { background-color: #576574; }
-        #btn-register { background-color: #2ed573; }
+
+        #btn-login-email { background-color: #576574; } #btn-login-email:hover { background-color: #8395a7; }
+
+        #btn-register { background-color: #2ed573; } #btn-register:hover { background-color: #7bed9f; }
+
         .divider { text-align: center; color: rgba(255,255,255,0.5); margin-bottom: 15px; font-size: 14px; }
-        .form-submit { width: 100%; padding: 12px; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; }
-        #error-msg { color: #ff4757; font-size: 13px; text-align: center; margin-bottom: 15px; display: none; }
+
+        #error-msg { color: #ff4757; font-size: 14px; text-align: center; margin-bottom: 15px; display: none; }
+
     </style>
+
 </head>
+
 <body>
+
     <div id="wrapper">
+
         <form id="form-login">
-            <h1 class="form-heading">Đăng nhập Ánh Shop</h1>
-            <div class="form-group"><i class="far fa-envelope"></i><input type="email" id="email-input" class="form-input" placeholder="Email"></div>
-            <div class="form-group"><i class="fas fa-key"></i><input type="password" id="password-input" class="form-input" placeholder="Mật khẩu"></div>
-            <div id="error-msg"></div>
-            <div class="btn-group">
-                <input type="button" value="Đăng nhập" class="btn-half" id="btn-login-email">
-                <input type="button" value="Đăng ký" class="btn-half" id="btn-register">
-            </div>
+
+            <h1 class="form-heading">Form đăng nhập</h1>
+
+            <div class="form-group"><i class="far fa-envelope"></i><input type="email" class="form-input" id="email-input" placeholder="Email của bạn"></div>
+
+            <div class="form-group"><i class="fas fa-key"></i><input type="password" class="form-input" id="password-input" placeholder="Mật khẩu (từ 6 ký tự)"></div>
+
+            <div id="error-msg">Sai tài khoản hoặc mật khẩu!</div>
+
+            <div class="btn-group"><input type="button" value="Đăng nhập" class="btn-half" id="btn-login-email"><input type="button" value="Đăng ký mới" class="btn-half" id="btn-register"></div>
+
             <div class="divider">HOẶC</div>
+
             <input type="button" value="ĐĂNG NHẬP BẰNG GOOGLE" class="form-submit" id="btn-login-google" style="background-color: #ea4335;">
+
         </form>
+
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q", authDomain: "dangnhap1-c4cc0.firebaseapp.com", projectId: "dangnhap1-c4cc0" };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
 
-        const errorMsg = document.getElementById('error-msg');
-        function showError(text) { errorMsg.textContent = text; errorMsg.style.display = 'block'; }
+    <script type="importmap">
 
-        // --- CHỐT CHẶN 1: CHỈ ĐĂNG NHẬP KHI KHÔNG CÓ LỆNH THOÁT ---
-        onAuthStateChanged(auth, (user) => {
-            if (user && localStorage.getItem('isForceLogout') !== 'true') {
-                window.parent.postMessage({ 
-                    status: 'logged_in', 
-                    name: user.displayName || user.email.split('@')[0], 
-                    avatar: user.photoURL || "https://i.imgur.com/3Z0o7v7.png", 
-                    uid: user.uid 
-                }, "*");
-                document.getElementById('wrapper').style.display = 'none';
-            } else {
-                document.getElementById('wrapper').style.display = 'block';
-                if (user && localStorage.getItem('isForceLogout') === 'true') signOut(auth);
-            }
-        });
+      { "imports": { "firebase/app": "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js", "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js" } }
 
-        // Xử lý nút bấm
-        const clearLock = () => { localStorage.removeItem('isForceLogout'); errorMsg.style.display = 'none'; };
-
-        document.getElementById('btn-login-google').onclick = () => { clearLock(); signInWithPopup(auth, provider); };
-        
-        document.getElementById('btn-login-email').onclick = () => {
-            clearLock();
-            const email = document.getElementById('email-input').value;
-            const pass = document.getElementById('password-input').value;
-            signInWithEmailAndPassword(auth, email, pass).catch(() => showError("Sai tài khoản hoặc mật khẩu!"));
-        };
-
-        // --- LẮNG NGHE LỆNH THOÁT TỪ BLOGGER ---
-        window.addEventListener('message', (event) => {
-            if (event.data && event.data.action === 'request_logout') {
-                localStorage.setItem('isForceLogout', 'true');
-                signOut(auth).then(() => {
-                    window.parent.postMessage({ status: 'logged_out' }, "*");
-                    location.reload();
-                });
-            }
-        });
     </script>
+
+    <script type="module">
+
+      import { initializeApp } from "firebase/app";
+
+      import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+
+
+
+      const app = initializeApp({ apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q", authDomain: "dangnhap1-c4cc0.firebaseapp.com", projectId: "dangnhap1-c4cc0" });
+
+      const auth = getAuth(app); const provider = new GoogleAuthProvider();
+
+      const loginBtnGoogle = document.getElementById('btn-login-google'); const btnLoginEmail = document.getElementById('btn-login-email'); const btnRegister = document.getElementById('btn-register'); const emailInput = document.getElementById('email-input'); const passwordInput = document.getElementById('password-input'); const errorMsg = document.getElementById('error-msg'); const wrapperDiv = document.getElementById('wrapper');
+
+
+
+      function showError(text) { errorMsg.textContent = text; errorMsg.style.display = 'block'; }
+
+
+
+      onAuthStateChanged(auth, (user) => {
+
+        if (user) {
+
+          const name = user.displayName || user.email.split('@')[0];
+
+          
+
+          // CHỈ LÀM ĐÚNG 1 VIỆC LÀ GỬI TÍN HIỆU CHO BLOGGER, KHÔNG CHUYỂN HƯỚNG NỮA!
+
+          window.parent.postMessage({ status: 'logged_in', name: name, email: user.email, avatar: user.photoURL || "https://i.imgur.com/3Z0o7v7.png", uid: user.uid }, "*");
+
+          
+
+        } else {
+
+          wrapperDiv.style.display = 'block'; errorMsg.style.display = 'none'; emailInput.value = ''; passwordInput.value = '';
+
+          window.parent.postMessage({ status: 'logged_out' }, "*");
+
+        }
+
+      });
+
+
+
+      if(btnRegister) { btnRegister.addEventListener('click', () => { if(!emailInput.value || !passwordInput.value) return showError("Vui lòng nhập đầy đủ!"); createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value).then(() => alert("Đăng ký thành công!")).catch((error) => showError("Lỗi: " + error.message)); }); }
+
+      if(btnLoginEmail) { btnLoginEmail.addEventListener('click', () => { if(!emailInput.value || !passwordInput.value) return showError("Vui lòng nhập đầy đủ!"); signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value).catch(() => showError("Sai tài khoản hoặc mật khẩu!")); }); }
+
+      if(loginBtnGoogle) { loginBtnGoogle.addEventListener('click', (e) => { e.preventDefault(); signInWithPopup(auth, provider).catch(() => showError("Lỗi đăng nhập Google!")); }); }
+
+      
+
+      window.addEventListener('message', (event) => { if (event.data && event.data.action === 'request_logout') signOut(auth); });
+
+    </script>
+
 </body>
+
 </html>
