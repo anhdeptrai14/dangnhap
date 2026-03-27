@@ -118,8 +118,26 @@
 
       
 
-      window.addEventListener('message', (event) => { if (event.data && event.data.action === 'request_logout') signOut(auth); });
-
+     // Lắng nghe lệnh từ Blogger gửi sang
+window.addEventListener('message', (event) => {
+    if (event.data && event.data.action === 'request_logout') {
+        // Xóa dấu vết đăng nhập tự động
+        localStorage.removeItem('firebase:host:dangnhap1-c4cc0.firebaseio.com'); 
+        
+        // Lệnh thoát chính thức của Firebase
+        signOut(auth).then(() => {
+            // Báo lại cho Blogger là đã sạch
+            window.parent.postMessage({ status: 'logged_out' }, "*");
+            
+            // Hiện lại khung đăng nhập trắng
+            if(document.getElementById('wrapper')) document.getElementById('wrapper').style.display = 'block';
+            if(document.getElementById('email-input')) document.getElementById('email-input').value = '';
+            if(document.getElementById('password-input')) document.getElementById('password-input').value = '';
+        }).catch((error) => {
+            console.error("Lỗi đăng xuất:", error);
+        });
+    }
+});
     </script>
 
 </body>
