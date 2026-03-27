@@ -64,81 +64,53 @@
 
     </script>
 
-    <script type="module">
+   <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-      import { initializeApp } from "firebase/app";
+  const app = initializeApp({ 
+    apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q", 
+    authDomain: "dangnhap1-c4cc0.firebaseapp.com", 
+    projectId: "dangnhap1-c4cc0" 
+  });
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
 
-      import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+  // --- CẤU HÌNH: CHỈ LƯU PHIÊN TRONG TAB HIỆN TẠI ---
+  // Khi đóng tab hoặc đăng xuất là mất sạch dấu vết
+  setPersistence(auth, browserSessionPersistence);
 
-
-
-      const app = initializeApp({ apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q", authDomain: "dangnhap1-c4cc0.firebaseapp.com", projectId: "dangnhap1-c4cc0" });
-
-      const auth = getAuth(app); const provider = new GoogleAuthProvider();
-
-      const loginBtnGoogle = document.getElementById('btn-login-google'); const btnLoginEmail = document.getElementById('btn-login-email'); const btnRegister = document.getElementById('btn-register'); const emailInput = document.getElementById('email-input'); const passwordInput = document.getElementById('password-input'); const errorMsg = document.getElementById('error-msg'); const wrapperDiv = document.getElementById('wrapper');
-
-
-
-      function showError(text) { errorMsg.textContent = text; errorMsg.style.display = 'block'; }
-
-
-
-      onAuthStateChanged(auth, (user) => {
-
-        if (user) {
-
-          const name = user.displayName || user.email.split('@')[0];
-
-          
-
-          // CHỈ LÀM ĐÚNG 1 VIỆC LÀ GỬI TÍN HIỆU CHO BLOGGER, KHÔNG CHUYỂN HƯỚNG NỮA!
-
-          window.parent.postMessage({ status: 'logged_in', name: name, email: user.email, avatar: user.photoURL || "https://i.imgur.com/3Z0o7v7.png", uid: user.uid }, "*");
-
-          
-
-        } else {
-
-          wrapperDiv.style.display = 'block'; errorMsg.style.display = 'none'; emailInput.value = ''; passwordInput.value = '';
-
-          window.parent.postMessage({ status: 'logged_out' }, "*");
-
-        }
-
-      });
-
-
-
-      if(btnRegister) { btnRegister.addEventListener('click', () => { if(!emailInput.value || !passwordInput.value) return showError("Vui lòng nhập đầy đủ!"); createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value).then(() => alert("Đăng ký thành công!")).catch((error) => showError("Lỗi: " + error.message)); }); }
-
-      if(btnLoginEmail) { btnLoginEmail.addEventListener('click', () => { if(!emailInput.value || !passwordInput.value) return showError("Vui lòng nhập đầy đủ!"); signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value).catch(() => showError("Sai tài khoản hoặc mật khẩu!")); }); }
-
-      if(loginBtnGoogle) { loginBtnGoogle.addEventListener('click', (e) => { e.preventDefault(); signInWithPopup(auth, provider).catch(() => showError("Lỗi đăng nhập Google!")); }); }
-
-      
-
-     // Lắng nghe lệnh từ Blogger gửi sang
-window.addEventListener('message', (event) => {
-    if (event.data && event.data.action === 'request_logout') {
-        // Xóa dấu vết đăng nhập tự động
-        localStorage.removeItem('firebase:host:dangnhap1-c4cc0.firebaseio.com'); 
-        
-        // Lệnh thoát chính thức của Firebase
-        signOut(auth).then(() => {
-            // Báo lại cho Blogger là đã sạch
-            window.parent.postMessage({ status: 'logged_out' }, "*");
-            
-            // Hiện lại khung đăng nhập trắng
-            if(document.getElementById('wrapper')) document.getElementById('wrapper').style.display = 'block';
-            if(document.getElementById('email-input')) document.getElementById('email-input').value = '';
-            if(document.getElementById('password-input')) document.getElementById('password-input').value = '';
-        }).catch((error) => {
-            console.error("Lỗi đăng xuất:", error);
-        });
+  onAuthStateChanged(auth, (user) => {
+    // Nếu có user VÀ không phải đang trong trạng thái vừa bấm Đăng xuất
+    if (user && localStorage.getItem('blockAutoLogin') !== 'true') {
+      window.parent.postMessage({ 
+        status: 'logged_in', 
+        name: user.displayName || user.email.split('@')[0], 
+        uid: user.uid,
+        avatar: user.photoURL || "https://i.imgur.com/3Z0o7v7.png"
+      }, "*");
+      document.getElementById('wrapper').style.display = 'none';
+    } else {
+      document.getElementById('wrapper').style.display = 'block';
     }
-});
-    </script>
+  });
+
+  // Khi bấm nút Google
+  document.getElementById('btn-login-google').onclick = () => {
+    localStorage.removeItem('blockAutoLogin'); // Mở khóa để đăng nhập
+    signInWithPopup(auth, provider);
+  };
+
+  // Lắng nghe lệnh thoát từ Blogger gửi sang
+  window.addEventListener('message', async (event) => {
+    if (event.data && event.data.action === 'request_logout') {
+      localStorage.setItem('blockAutoLogin', 'true'); // Khóa cửa tự động
+      await signOut(auth);
+      window.parent.postMessage({ status: 'logged_out' }, "*");
+      location.reload(); // Làm mới để hiện khung đăng nhập trắng
+    }
+  });
+</script>
 
 </body>
 
