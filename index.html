@@ -105,17 +105,23 @@
       signInWithPopup(auth, provider).catch(() => showError("Lỗi đăng nhập Google!")); 
   };
 
-  // LẮNG NGHE LỆNH THOÁT TỪ BLOGGER
-  window.addEventListener('message', (event) => { 
-      if (event.data && event.data.action === 'request_logout') {
-          localStorage.setItem('forceLogout', 'true'); 
-          signOut(auth).then(() => {
-              window.parent.postMessage({ status: 'logged_out' }, "*");
-              // KHÔNG reload toàn bộ để tránh mất trạng thái chặn, chỉ hiện lại form
-              wrapperDiv.style.display = 'block';
-          });
-      } 
-  });
+  // LẮNG NGHE LỆNH TỪ BLOGGER (Cập nhật bản sửa lỗi liệt nút)
+window.addEventListener('message', (event) => { 
+    // Lệnh thoát
+    if (event.data && event.data.action === 'request_logout') {
+        localStorage.setItem('forceLogout', 'true'); 
+        signOut(auth).then(() => {
+            window.parent.postMessage({ status: 'logged_out' }, "*");
+            document.getElementById('wrapper').style.display = 'block';
+        });
+    } 
+    
+    // Lệnh mở khóa (Khi Ánh bấm nút Đăng nhập ở trang chính)
+    if (event.data && event.data.action === 'unlock_auth') {
+        localStorage.removeItem('forceLogout'); // Xóa chặn ở phía GitHub
+        console.log("Đã mở khóa đăng nhập trên GitHub");
+    }
+});
 </script>
 </body>
 </html>
