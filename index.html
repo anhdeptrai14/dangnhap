@@ -1,127 +1,82 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
-    <style>
-        .btn-group { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 15px; }
-        .btn-half { flex: 1; padding: 12px 0; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        #btn-login-email { background-color: #576574; } #btn-login-email:hover { background-color: #8395a7; }
-        #btn-register { background-color: #2ed573; } #btn-register:hover { background-color: #7bed9f; }
-        .divider { text-align: center; color: rgba(255,255,255,0.5); margin-bottom: 15px; font-size: 14px; }
-        #error-msg { color: #ff4757; font-size: 14px; text-align: center; margin-bottom: 15px; display: none; }
-        .form-submit { width: 100%; padding: 12px; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; }
-        /* CSS bổ sung để đảm bảo giao diện hiển thị đúng */
-        body { font-family: sans-serif; }
-        #wrapper { display: block; }
-        .form-group { background: #f1f3f5; border: 1px solid #ddd; border-radius: 4px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; }
-        .form-group i { margin-right: 10px; color: #666; }
-        .form-input { border: none; background: transparent; outline: none; width: 100%; }
-    </style>
+    <title>Form login unitop.vn</title>
 </head>
+
 <body>
     <div id="wrapper">
-        <form id="form-login">
-            <h1 class="form-heading" style="text-align:center; font-size: 20px; margin-bottom: 20px;">ĐĂNG NHẬP ÁNH SHOP</h1>
-            <div class="form-group"><i class="far fa-envelope"></i><input type="email" class="form-input" id="email-input" placeholder="Email của bạn"></div>
-            <div class="form-group"><i class="fas fa-key"></i><input type="password" class="form-input" id="password-input" placeholder="Mật khẩu"></div>
-            <div id="error-msg"></div>
-            <div class="btn-group">
-                <input type="button" value="Đăng nhập" class="btn-half" id="btn-login-email">
-                <input type="button" value="Đăng ký" class="btn-half" id="btn-register">
+        <form action="" id="form-login">
+            <h1 class="form-heading">Form đăng nhập</h1>
+            <div class="form-group">
+                <i class="far fa-user"></i>
+                <input type="text" class="form-input" placeholder="Tên đăng nhập">
             </div>
-            <div class="divider">HOẶC</div>
-            <input type="button" value="ĐĂNG NHẬP BẰNG GOOGLE" class="form-submit" id="btn-login-google" style="background-color: #ea4335;">
+            <div class="form-group">
+                <i class="fas fa-key"></i>
+                <input type="password" class="form-input" placeholder="Mật khẩu">
+                <div id="eye">
+                    <i class="far fa-eye"></i>
+                </div>
+            </div>
+            <input type="button" value="Đăng nhập bằng Google" class="form-submit" id="btn-login-google">
         </form>
     </div>
 
-    <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    <script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js"
+    }
+  }
+    </script>
 
-  const app = initializeApp({ 
-    apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q", 
-    authDomain: "dangnhap1-c4cc0.firebaseapp.com", 
-    projectId: "dangnhap1-c4cc0" 
-  });
-  const auth = getAuth(app); 
+    <script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
+  // MÃ CẤU HÌNH CỦA BẠN:
+  const firebaseConfig = {
+    apiKey: "AIzaSyBjvnwBe7TCQPvL0xs4vy9N9UBOKCnEN2Q",
+    authDomain: "dangnhap1-c4cc0.firebaseapp.com",
+    projectId: "dangnhap1-c4cc0",
+    storageBucket: "dangnhap1-c4cc0.firebasestorage.app",
+    messagingSenderId: "252914631733",
+    appId: "1:252914631733:web:1cee2d0f290e2b05df5d7c",
+    measurementId: "G-7H39BHN61E"
+  };
+
+  // Khởi tạo Firebase và Auth
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
-  const errorMsg = document.getElementById('error-msg');
-  const wrapperDiv = document.getElementById('wrapper');
+  // KẾT NỐI VỚI NÚT ĐĂNG NHẬP TRÊN GIAO DIỆN
+  const loginBtn = document.getElementById('btn-login-google'); 
 
-  function showError(text) { errorMsg.textContent = text; errorMsg.style.display = 'block'; }
-
-  // --- THEO DÕI TRẠNG THÁI ---
-  onAuthStateChanged(auth, (user) => {
-    // ĐỒNG BỘ TÊN BIẾN: forceLogout (giống bên Blogger)
-    const isForced = localStorage.getItem('forceLogout') === 'true';
-
-    if (user && !isForced) {
-      // Gửi dữ liệu về Blogger
-      window.parent.postMessage({ 
-        status: 'logged_in', 
-        name: user.displayName || user.email.split('@')[0], 
-        email: user.email, 
-        avatar: user.photoURL || "https://i.imgur.com/3Z0o7v7.png", 
-        uid: user.uid 
-      }, "*");
-      wrapperDiv.style.display = 'none'; 
-    } else {
-      // Nếu có user nhưng đang bị chặn thoát -> Ép thoát Firebase
-      if (user && isForced) {
-          signOut(auth);
-      }
-      wrapperDiv.style.display = 'block'; // Hiện lại form đăng nhập trắng
-    }
-  });
-
-  // Mở khóa khi người dùng chủ động bấm vào các nút đăng nhập
-  const unlockAuth = () => {
-      localStorage.removeItem('forceLogout');
-      errorMsg.style.display = 'none';
-  };
-
-  document.getElementById('btn-register').onclick = () => { 
-      unlockAuth();
-      const email = document.getElementById('email-input').value;
-      const pass = document.getElementById('password-input').value;
-      if(!email || !pass) return showError("Vui lòng nhập đầy đủ!"); 
-      createUserWithEmailAndPassword(auth, email, pass).then(() => alert("Đăng ký thành công!")).catch((error) => showError("Lỗi: " + error.message)); 
-  };
-
-  document.getElementById('btn-login-email').onclick = () => { 
-      unlockAuth();
-      const email = document.getElementById('email-input').value;
-      const pass = document.getElementById('password-input').value;
-      if(!email || !pass) return showError("Vui lòng nhập đầy đủ!"); 
-      signInWithEmailAndPassword(auth, email, pass).catch(() => showError("Sai tài khoản hoặc mật khẩu!")); 
-  };
-
-  document.getElementById('btn-login-google').onclick = (e) => { 
-      e.preventDefault(); 
-      unlockAuth();
-      signInWithPopup(auth, provider).catch(() => showError("Lỗi đăng nhập Google!")); 
-  };
-
-  // LẮNG NGHE LỆNH TỪ BLOGGER (Cập nhật bản sửa lỗi liệt nút)
-window.addEventListener('message', (event) => { 
-    // Lệnh thoát
-    if (event.data && event.data.action === 'request_logout') {
-        localStorage.setItem('forceLogout', 'true'); 
-        signOut(auth).then(() => {
-            window.parent.postMessage({ status: 'logged_out' }, "*");
-            document.getElementById('wrapper').style.display = 'block';
+  if(loginBtn) {
+    loginBtn.addEventListener('click', (e) => {
+      e.preventDefault(); // Ngăn trang bị tải lại
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          alert("Đăng nhập thành công! Xin chào: " + result.user.displayName);
+        }).catch((error) => {
+          console.error("Lỗi đăng nhập:", error);
+          alert("Lỗi đăng nhập: " + error.message);
         });
-    } 
-    
-    // Lệnh mở khóa (Khi Ánh bấm nút Đăng nhập ở trang chính)
-    if (event.data && event.data.action === 'unlock_auth') {
-        localStorage.removeItem('forceLogout'); // Xóa chặn ở phía GitHub
-        console.log("Đã mở khóa đăng nhập trên GitHub");
-    }
-});
-</script>
+    });
+  } else {
+    console.log("Chưa tìm thấy nút nào có id='btn-login-google' trong file HTML");
+  }
+    </script>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="js/app.js"></script>
 </html>
