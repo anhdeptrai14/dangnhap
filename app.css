@@ -1,64 +1,145 @@
-body{
-    background: url('../img/bg.jpg');
+/* NÂNG CẤP GIAO DIỆN ÁNH SHOP - GLASSMORPHISM STYLE */
+body {
+    background: url('../img/bg.jpg') no-repeat center center fixed;
     background-size: cover;
-    background-position-y: -80px;
-    font-size: 16px;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    overflow: hidden; /* Tránh cuộn trang không cần thiết */
 }
-#wrapper{
+
+#wrapper {
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    /* Thêm lớp phủ tối để nổi bật khung đăng nhập */
+    background: rgba(0, 0, 0, 0.4); 
 }
-#form-login{
-    max-width: 400px;
-    background: rgba(0, 0, 0 , 0.8);
-    flex-grow: 1;
-    padding: 30px 30px 40px;
-    box-shadow: 0px 0px 17px 2px rgba(255, 255, 255, 0.8);
+
+#form-login {
+    width: 100%;
+    max-width: 380px;
+    /* HIỆU ỨNG KÍNH MỜ (Glassmorphism) */
+    background: rgba(255, 255, 255, 0.1); 
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 40px 35px;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+    transition: 0.4s;
 }
-.form-heading{
-    font-size: 25px;
-    color: #f5f5f5;
-    text-align: center;
-    margin-bottom: 30px;
+
+#form-login:hover {
+    border: 1px solid rgba(255, 255, 255, 0.4);
 }
-.form-group{
-    border-bottom: 1px solid #fff;
-    margin-top: 15px;
-    margin-bottom: 20px;
-    display: flex;
-}
-.form-group i{
+
+.form-heading {
+    font-size: 28px;
     color: #fff;
-    font-size: 14px;
-    padding-top: 5px;
-    padding-right: 10px;
+    text-align: center;
+    margin-bottom: 35px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
-.form-input{
+
+.form-group {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    transition: 0.3s;
+}
+
+.form-group:focus-within {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+}
+
+.form-group i {
+    color: #fff;
+    font-size: 16px;
+    width: 25px;
+}
+
+.form-input {
     background: transparent;
     border: 0;
     outline: 0;
-    color: #f5f5f5;
+    color: #fff;
     flex-grow: 1;
+    font-size: 15px;
 }
-.form-input::placeholder{
-    color: #f5f5f5;
+
+.form-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
 }
-#eye i{
-    padding-right: 0;
+
+/* NÚT ĐĂNG NHẬP & ĐĂNG KÝ */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-half {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
     cursor: pointer;
+    transition: 0.3s;
 }
-.form-submit{
-    background: transparent;
-    border: 1px solid #f5f5f5;
+
+#btn-login-email { background: #fff; color: #333; }
+#btn-login-email:hover { background: #54a0ff; color: #fff; transform: translateY(-2px); }
+
+#btn-register { background: #2ed573; color: #fff; }
+#btn-register:hover { background: #7bed9f; transform: translateY(-2px); }
+
+.divider {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 20px 0;
+    font-size: 13px;
+    position: relative;
+}
+
+/* NÚT GOOGLE CHUYÊN NGHIỆP */
+.form-submit {
+    background: #ea4335;
+    border: none;
     color: #fff;
     width: 100%;
     text-transform: uppercase;
-    padding: 6px 10px;
-    transition: 0.25s ease-in-out;
-    margin-top: 30px;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(234, 67, 53, 0.3);
 }
-.form-submit:hover{
-    border: 1px solid #54a0ff;
+
+.form-submit:hover {
+    background: #ff5e57;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(234, 67, 53, 0.5);
+}
+
+#error-msg {
+    color: #ff4d4d;
+    background: rgba(255, 77, 77, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 15px;
+    display: none;
 }
