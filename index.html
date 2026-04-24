@@ -54,34 +54,27 @@
   function showError(text) { errorMsg.textContent = text; errorMsg.style.display = 'block'; }
 
   // --- THEO DÕI TRẠNG THÁI ---
- onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, (user) => {
   const isForced = localStorage.getItem('forceLogout') === 'true';
 
-  // ❌ Nếu đã bấm logout → KHÔNG cho auto login lại
+  // 🚫 Nếu đã logout → chặn auto login
   if (isForced) {
-    if (user) {
-      signOut(auth); // ép logout Firebase
-    }
+    if (user) signOut(auth);
     wrapperDiv.style.display = 'block';
-    return; // chặn luôn
+    return;
   }
 
-  // ✅ Nếu có user bình thường
   if (user) {
-    const userAvatar = user.photoURL || "";
-
     window.parent.postMessage({ 
       status: 'logged_in', 
       name: user.displayName || user.email.split('@')[0], 
       email: user.email, 
-      avatar: userAvatar,
+      avatar: user.photoURL || "",
       uid: user.uid 
     }, "*");
 
     wrapperDiv.style.display = 'none';
-
   } else {
-    // ✅ Không có user → hiện form
     wrapperDiv.style.display = 'block';
   }
 });
