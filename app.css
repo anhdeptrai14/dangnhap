@@ -1,71 +1,121 @@
 body{
     background: url('../img/bg.jpg');
     background-size: cover;
-    background-position-y: -80px;
+    background-position: center;
     font-size: 16px;
+    margin: 0;
 }
+
 #wrapper{
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 #form-login{
     max-width: 400px;
     width: 100%;
-    background: rgba(0, 0, 0 , 0.8);
+    background: rgba(0, 0, 0 , 0.85);
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0px 0px 17px 2px rgba(255, 255, 255, 0.8);
+    box-shadow: 0px 0px 17px 2px rgba(255, 255, 255, 0.4);
+    box-sizing: border-box;
 
-    max-height: 90vh;   /* QUAN TRỌNG */
-    overflow-y: auto;   /* tránh tràn */
+    max-height: 90vh;
+    overflow-y: auto;
 }
+
 .form-heading{
     font-size: 25px;
-    color: #f5f5f5;
+    color: #fff;
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
+
 .form-group{
     border-bottom: 1px solid #fff;
-    margin-top: 15px;
-    margin-bottom: 20px;
+    margin: 15px 0;
     display: flex;
+    align-items: center;
 }
+
 .form-group i{
     color: #fff;
     font-size: 14px;
-    padding-top: 5px;
-    padding-right: 10px;
+    margin-right: 10px;
 }
+
 .form-input{
     background: transparent;
-    border: 0;
-    outline: 0;
-    color: #f5f5f5;
-    flex-grow: 1;
+    border: none;
+    outline: none;
+    color: #fff;
+    flex: 1;
 }
-html, body {
-    overflow: hidden;
-}
+
 .form-input::placeholder{
-    color: #f5f5f5;
+    color: #ccc;
 }
-#eye i{
-    padding-right: 0;
-    cursor: pointer;
-}
+
 .form-submit{
     background: transparent;
-    border: 1px solid #f5f5f5;
+    border: 1px solid #fff;
     color: #fff;
     width: 100%;
     text-transform: uppercase;
-    padding: 6px 10px;
-    transition: 0.25s ease-in-out;
-    margin-top: 30px;
+    padding: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: 0.3s;
 }
+
 .form-submit:hover{
-    border: 1px solid #54a0ff;
+    border-color: #54a0ff;
+}
+
+/* Button group */
+.btn-group{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.btn-half{
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#btn-login-email{
+    background: #576574;
+}
+
+#btn-login-email:hover{
+    background: #8395a7;
+}
+
+#btn-register{
+    background: #2ed573;
+}
+
+#btn-register:hover{
+    background: #7bed9f;
+}
+
+.divider{
+    text-align: center;
+    color: rgba(255,255,255,0.6);
+    margin: 10px 0;
+}
+
+#error-msg{
+    color: #ff4757;
+    text-align: center;
+    margin-bottom: 10px;
+    display: none;
 }
