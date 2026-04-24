@@ -63,11 +63,6 @@ body{
     transition: 0.25s ease-in-out;
     margin-top: 30px;
 }
-html, body {
-    height: 100%;
-    margin: 0;
-    overflow: hidden; /* CHẶN SCROLL */
-}
 .form-submit:hover{
     border: 1px solid #54a0ff;
 }
